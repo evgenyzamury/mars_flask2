@@ -8,9 +8,17 @@ app = Flask(__name__)
 def index(title):
     return render_template('base.html', title=title)
 
+
 @app.route('/training/<name>')
 def training(name):
     return render_template('training.html', prof=name.lower())
+
+
+@app.route('/list_prof/<lst>')
+def list_prof(lst):
+    professions = ['инженер-исследователь', 'пилот', 'строитель', 'экзобиолог', "врач", "инженер по терраформированию"
+        , "климатолог"]
+    return render_template('list_prof.html', lst=lst, professions=professions)
 
 
 if __name__ == '__main__':
