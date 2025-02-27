@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main>
+    <h2>Оформление каюты</h2>
+    <table>
+        <tr>
+            <td bgcolor="#dddddd" align="center">Цвет стен</td>
+            <td bgcolor="#dddddd" align="center">Эмблема</td>
+        </tr>
+        <tr>
+            {% if sex == 'male' %}
+                {% if age < 21 %}
+                    <td width="270px" bgcolor="#b0c4de"></td>
+                    <td><img src="/../static/img/baby.png" alt="Здесь должна быть картинка"></td>
+                {% else %}
+                    <td width="270px" bgcolor="#007ff0"></td>
+                    <td><img src="/../static/img/adult.png" alt="Здесь должна быть картинка"></td>
+                {% endif %}
+            {% elif sex == 'female' %}
+                {% if age < 21 %}
+                    <td width="270px" bgcolor="#ffa07a"></td>
+                    <td><img src="/../static/img/baby.png" alt="Здесь должна быть картинка"></td>
+                {% else %}
+                    <td width="270px" bgcolor="#ff4500"></td>
+                    <td><img src="/../static/img/adult.png" alt="Здесь должна быть картинка"></td>
+                {% endif %}
+            {% endif %}
+        </tr>
+    </table>
+</main>
+{% endblock %}
