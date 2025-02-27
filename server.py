@@ -1,4 +1,5 @@
-from flask import Flask, render_template, redirect
+import os
+from flask import Flask, render_template, redirect, request
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
@@ -72,6 +73,21 @@ def distribution():
 @app.route('/table_param/<sex>/<int:age>')
 def table_param(sex, age):
     return render_template('table_param.html', sex=sex, age=age)
+
+
+@app.route('/carousel', methods=['POST', 'GET'])
+def carousel():
+    if request.method == 'POST':
+        images = os.listdir('static/img/carousel')
+        file_number = images[-1][13:images[-1].find('.'):]
+        file_number = f"{int(file_number) + 1}"
+        with open('static/img/carousel/mars_carousel' + file_number + '.png', 'wb') as file:
+            file.write(request.files['file'].read())
+        images.append('mars_carousel' + file_number + '.png')
+        request.method = 'GET'
+    else:
+        images = os.listdir('static/img/carousel')
+    return render_template('carousel.html', images=images)
 
 
 if __name__ == '__main__':
