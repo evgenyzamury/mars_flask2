@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, redirect, request
+from flask import Flask, render_template, redirect, request, json
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
@@ -88,6 +88,13 @@ def carousel():
     else:
         images = os.listdir('static/img/carousel')
     return render_template('carousel.html', images=images)
+
+
+@app.route("/member")
+def member():
+    with open('templates/members_info.json', 'rt', encoding='UTF-8') as file:
+        members_json = json.loads(file.read())
+    return render_template('member.html', members_json=members_json)
 
 
 if __name__ == '__main__':

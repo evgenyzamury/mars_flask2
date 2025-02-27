@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% set member = members_json["members"] | random %}
+
+{% block content %}
+
+<h1 align="center">{{ member['name'] }} {{ member['surname'] }}</h1>
+<div class="block-image"><img src="{{ member['img'] }}" alt='не загрузилось изображение'></div>
+<p align="center">{% for proffession in member['proffessions'] %}
+    {% if not loop.last %} {{ proffession }}, {% else %} {{ proffession }} {% endif %} {% endfor %}</p>
+
+{% endblock %}

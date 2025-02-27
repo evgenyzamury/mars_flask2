@@ -1,0 +1,23 @@
+{
+  "members": [
+    {
+      "name":"Юрий",
+      "surname": "Гагарин",
+      "img": "/static/img/photo_astronaut/astronaut1.png",
+      "proffessions": ["инженер-исследователь", "пилот"]
+    },
+    {
+      "name":"Герман",
+      "surname": "Титов",
+      "img": "/static/img/photo_astronaut/astronaut2.png",
+      "proffessions": ["экзобиолог", "врач", "инженер по терраформированию"]
+    },
+    {
+      "name":"Энди",
+      "surname": "Уир",
+      "img": "/static/img/photo_astronaut/astronaut3.png",
+      "proffessions": ["астрогеолог", "специалист по радиационной защите"]
+    }
+
+  ]
+}

@@ -6,3 +6,7 @@ h4{
 h1.login_from::before{
     content: url('../img/emblema.png');
 }
+
+div.block-image{
+    text-align: center;
+}
