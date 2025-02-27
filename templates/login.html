@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<main>
+    <form action="" method="post" novalidate>
+        <h1 class="login_from">Аварийный доступ</h1>
+        <div>
+            {{ form.csrf_token }}
+        </div>
+        <p>
+            {{ form.id_astronaut.label }}<br>
+            {{ form.id_astronaut(class="form-control") }}<br>
+            {% for error in form.id_astronaut.errors %}
+                <div class="alert alert-danger" role="alert"> {{ error }} </div>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.password_astronaut.label}}<br>
+            {{ form.password_astronaut(class="form-control") }}<br>
+            {% for error in form.password_astronaut.errors %}
+                <div class="alert alert-danger" role="alert"> {{ error }} </div>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.id_capitan.label }}<br>
+            {{ form.id_capitan(class="form-control") }}<br>
+            {% for error in form.id_capitan.errors %}
+                <div class="alert alert-danger" role="alert"> {{ error }} </div>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.password_capitan.label}}<br>
+            {{ form.password_capitan(class="form-control") }}<br>
+            {% for error in form.password_capitan.errors %}
+                <div class="alert alert-danger" role="alert"> {{ error }} </div>
+            {% endfor %}
+        </p>
+        {{ form.access(type="submit", class="btn btn-primary") }}
+
+
+    </form>
+</main>
+{% endblock %}
