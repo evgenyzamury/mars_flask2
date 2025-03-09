@@ -3,6 +3,9 @@ from flask import Flask, render_template, redirect, request, json
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
+from data import db_session
+from data.users import User
+from data.jobs import Jobs
 
 
 class LoginForm(FlaskForm):
@@ -98,4 +101,51 @@ def member():
 
 
 if __name__ == '__main__':
+    db_session.global_init('db/blogs.db')
+    db_sess = db_session.create_session()
+    # 1
+    user = User()
+    user.surname = 'Scott'
+    user.name = 'Ridley'
+    user.age = 21
+    user.position = 'capatain'
+    user.speciality = 'research engineer'
+    user.address = 'module_1'
+    user.email = 'scott_chief@mars.org'
+    db_sess.add(user)
+    db_sess.commit()
+    # 2
+    user = User()
+    user.surname = 'Dray'
+    user.name = 'Megel'
+    user.age = 25
+    user.position = 'technic'
+    user.speciality = 'geniy'
+    user.address = 'module_2'
+    user.email = 'dray_meg@mars.org'
+    db_sess.add(user)
+    db_sess.commit()
+    # 3
+    user = User()
+    user.surname = 'Romal'
+    user.name = 'Maks'
+    user.age = 25
+    user.position = 'driver'
+    user.speciality = 'hard driver'
+    user.address = 'module_3'
+    user.email = 'roma_maks@mars.org'
+    db_sess.add(user)
+    db_sess.commit()
+    # 4
+    user = User()
+    user.surname = 'Muriy'
+    user.name = 'Tom'
+    user.age = 24
+    user.position = 'builder'
+    user.speciality = 'expert'
+    user.address = 'module_4'
+    user.email = 'tom_mur@mars.org'
+    db_sess.add(user)
+    db_sess.commit()
+
     app.run(port=8080, host='127.0.0.1')
