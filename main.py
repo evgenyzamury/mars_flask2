@@ -1,3 +1,4 @@
+import datetime
 import os
 from flask import Flask, render_template, redirect, request, json
 from flask_wtf import FlaskForm
@@ -103,7 +104,8 @@ def member():
 if __name__ == '__main__':
     db_session.global_init('db/blogs.db')
     db_sess = db_session.create_session()
-    # 1
+    # users
+    # user 1
     user = User()
     user.surname = 'Scott'
     user.name = 'Ridley'
@@ -114,7 +116,7 @@ if __name__ == '__main__':
     user.email = 'scott_chief@mars.org'
     db_sess.add(user)
     db_sess.commit()
-    # 2
+    # user 2
     user = User()
     user.surname = 'Dray'
     user.name = 'Megel'
@@ -125,7 +127,7 @@ if __name__ == '__main__':
     user.email = 'dray_meg@mars.org'
     db_sess.add(user)
     db_sess.commit()
-    # 3
+    # user 3
     user = User()
     user.surname = 'Romal'
     user.name = 'Maks'
@@ -136,7 +138,7 @@ if __name__ == '__main__':
     user.email = 'roma_maks@mars.org'
     db_sess.add(user)
     db_sess.commit()
-    # 4
+    # user 4
     user = User()
     user.surname = 'Muriy'
     user.name = 'Tom'
@@ -146,6 +148,16 @@ if __name__ == '__main__':
     user.address = 'module_4'
     user.email = 'tom_mur@mars.org'
     db_sess.add(user)
+    db_sess.commit()
+    # jobs
+    # job 1
+    job = Jobs()
+    job.team_leader = 1
+    job.job = 'deployment of residential modules 1 and 2'
+    job.work_size = 15
+    job.start_date = datetime.datetime.now()
+    job.is_finished = False
+    db_sess.add(job)
     db_sess.commit()
 
     app.run(port=8080, host='127.0.0.1')
