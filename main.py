@@ -23,7 +23,15 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 @app.route('/')
 def index():
-    return render_template('base.html', title='')
+    db_sess = db_session.create_session()
+    jobs = db_sess.query(Jobs).join(User, User.id == Jobs.team_leader).all()
+    from_id_to_name = dict()
+    for item in jobs:
+        print(item.team_leader)
+        user = db_sess.query(User).filter(User.id == item.team_leader).first()
+        from_id_to_name[item.team_leader] = f'{user.name} {user.surname}'
+    print(from_id_to_name)
+    return render_template('workslog.html', jobs=jobs, from_id_to_name=from_id_to_name)
 
 
 @app.route('/<title>')

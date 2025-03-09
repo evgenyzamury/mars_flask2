@@ -10,3 +10,15 @@ h1.login_from::before{
 div.block-image{
     text-align: center;
 }
+
+td{
+    padding: 15px;
+}
+
+thead{
+    background: #dddddd;
+}
+
+tbody{
+    background: #eeeeff;
+}
