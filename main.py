@@ -7,6 +7,7 @@ from wtforms.validators import DataRequired
 from data import db_session
 from data.users import User
 from data.jobs import Jobs
+from forms.user import RegisterForm
 
 
 class LoginForm(FlaskForm):
@@ -109,63 +110,91 @@ def member():
     return render_template('member.html', members_json=members_json)
 
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        if form.password.data != form.repeat_password.data:
+            return render_template('register.html', title='регистрация', form=form, message='пароли не совпадают')
+        db_sess = db_session.create_session()
+        if db_sess.query(User).filter(User.email == form.email.data).first():
+            return render_template('register.html', title='регистрация', form=form,
+                                   message='такой пользователь уже есть')
+        user = User(
+            email=form.email.data,
+            surname=form.surname.data,
+            name=form.name.data,
+            age=int(form.age.data),
+            position=form.position.data,
+            speciality=form.speciality.data,
+            address=form.address.data,
+            modified_date=datetime.datetime.now()
+        )
+        user.set_password(form.password.data)
+        db_sess.add(user)
+        db_sess.commit()
+        return redirect('/')
+    return render_template('register.html', title='Регистрация', form=form)
+
+
 if __name__ == '__main__':
     db_session.global_init('db/blogs.db')
     db_sess = db_session.create_session()
-    # users
-    # user 1
-    user = User()
-    user.surname = 'Scott'
-    user.name = 'Ridley'
-    user.age = 21
-    user.position = 'capatain'
-    user.speciality = 'research engineer'
-    user.address = 'module_1'
-    user.email = 'scott_chief@mars.org'
-    db_sess.add(user)
-    db_sess.commit()
-    # user 2
-    user = User()
-    user.surname = 'Dray'
-    user.name = 'Megel'
-    user.age = 25
-    user.position = 'technic'
-    user.speciality = 'geniy'
-    user.address = 'module_2'
-    user.email = 'dray_meg@mars.org'
-    db_sess.add(user)
-    db_sess.commit()
-    # user 3
-    user = User()
-    user.surname = 'Romal'
-    user.name = 'Maks'
-    user.age = 25
-    user.position = 'driver'
-    user.speciality = 'hard driver'
-    user.address = 'module_3'
-    user.email = 'roma_maks@mars.org'
-    db_sess.add(user)
-    db_sess.commit()
-    # user 4
-    user = User()
-    user.surname = 'Muriy'
-    user.name = 'Tom'
-    user.age = 24
-    user.position = 'builder'
-    user.speciality = 'expert'
-    user.address = 'module_4'
-    user.email = 'tom_mur@mars.org'
-    db_sess.add(user)
-    db_sess.commit()
-    # jobs
-    # job 1
-    job = Jobs()
-    job.team_leader = 1
-    job.job = 'deployment of residential modules 1 and 2'
-    job.work_size = 15
-    job.start_date = datetime.datetime.now()
-    job.is_finished = False
-    db_sess.add(job)
-    db_sess.commit()
+    if not bool(db_sess.query(User).first()):  # создаём пример из задания если бд пустая
+        # users
+        # user 1
+        user = User()
+        user.surname = 'Scott'
+        user.name = 'Ridley'
+        user.age = 21
+        user.position = 'capatain'
+        user.speciality = 'research engineer'
+        user.address = 'module_1'
+        user.email = 'scott_chief@mars.org'
+        db_sess.add(user)
+        db_sess.commit()
+        # user 2
+        user = User()
+        user.surname = 'Dray'
+        user.name = 'Megel'
+        user.age = 25
+        user.position = 'technic'
+        user.speciality = 'geniy'
+        user.address = 'module_2'
+        user.email = 'dray_meg@mars.org'
+        db_sess.add(user)
+        db_sess.commit()
+        # user 3
+        user = User()
+        user.surname = 'Romal'
+        user.name = 'Maks'
+        user.age = 25
+        user.position = 'driver'
+        user.speciality = 'hard driver'
+        user.address = 'module_3'
+        user.email = 'roma_maks@mars.org'
+        db_sess.add(user)
+        db_sess.commit()
+        # user 4
+        user = User()
+        user.surname = 'Muriy'
+        user.name = 'Tom'
+        user.age = 24
+        user.position = 'builder'
+        user.speciality = 'expert'
+        user.address = 'module_4'
+        user.email = 'tom_mur@mars.org'
+        db_sess.add(user)
+        db_sess.commit()
+        # jobs
+        # job 1
+        job = Jobs()
+        job.team_leader = 1
+        job.job = 'deployment of residential modules 1 and 2'
+        job.work_size = 15
+        job.start_date = datetime.datetime.now()
+        job.is_finished = False
+        db_sess.add(job)
+        db_sess.commit()
 
     app.run(port=8080, host='127.0.0.1')
