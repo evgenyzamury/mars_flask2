@@ -1,25 +1,26 @@
 import datetime
 import os
+
 from flask import Flask, render_template, redirect, request, json
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired
+from flask_login import LoginManager, login_user
+from forms.login import LoginForm
+
 from data import db_session
 from data.users import User
 from data.jobs import Jobs
 from forms.user import RegisterForm
 
-
-class LoginForm(FlaskForm):
-    id_astronaut = StringField('id астронавта', validators=[DataRequired()])
-    password_astronaut = PasswordField('Пароль астронавта', validators=[DataRequired()])
-    id_capitan = StringField("id капитана", validators=[DataRequired()])
-    password_capitan = PasswordField("Пароль капитана", validators=[DataRequired()])
-    access = SubmitField('доступ')
-
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    db_sess = db_session.create_session()
+    return db_sess.query(User).get(user_id)
 
 
 @app.route('/')
@@ -28,10 +29,8 @@ def index():
     jobs = db_sess.query(Jobs).join(User, User.id == Jobs.team_leader).all()
     from_id_to_name = dict()
     for item in jobs:
-        print(item.team_leader)
         user = db_sess.query(User).filter(User.id == item.team_leader).first()
         from_id_to_name[item.team_leader] = f'{user.name} {user.surname}'
-    print(from_id_to_name)
     return render_template('workslog.html', jobs=jobs, from_id_to_name=from_id_to_name)
 
 
@@ -73,9 +72,15 @@ def answer():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        return redirect('/success')
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.email == form.email.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            return redirect("/")
+        return render_template('login.html',
+                               message="Неправильный логин или пароль",
+                               form=form)
     return render_template('login.html', title='Авторизация', form=form)
-
 
 @app.route('/distribution')
 def distribution():
@@ -192,6 +197,15 @@ if __name__ == '__main__':
         job.team_leader = 1
         job.job = 'deployment of residential modules 1 and 2'
         job.work_size = 15
+        job.start_date = datetime.datetime.now()
+        job.is_finished = False
+        db_sess.add(job)
+        db_sess.commit()
+        # job 2
+        job = Jobs()
+        job.team_leader = 4
+        job.job = 'build sceleton tower'
+        job.work_size = 20
         job.start_date = datetime.datetime.now()
         job.is_finished = False
         db_sess.add(job)
