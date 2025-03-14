@@ -2,13 +2,14 @@ import datetime
 import os
 
 from flask import Flask, render_template, redirect, request, json
-from flask_login import LoginManager, login_user
-from forms.login import LoginForm
+from flask_login import LoginManager, login_user, login_required, current_user
 
 from data import db_session
-from data.users import User
 from data.jobs import Jobs
+from data.users import User
+from forms.login import LoginForm
 from forms.user import RegisterForm
+from forms.jobs import JobsForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -82,6 +83,24 @@ def login():
                                form=form)
     return render_template('login.html', title='Авторизация', form=form)
 
+
+@app.route('/news', methods=['GET', 'POST'])
+@login_required
+def add_news():
+    form = JobsForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        jobs = Jobs()
+        jobs.job = form.job.data
+        jobs.team_leader = form.job.data
+        jobs.work_size = form.job.data
+        jobs.collaborators = form.collaborators.data
+        current_user.jobs.append(jobs)
+        db_sess.merge(current_user)
+        db_sess.commit()
+        return redirect('/')
+    return render_template('jobs.html', title='Добавление новости',
+                           form=form)
 @app.route('/distribution')
 def distribution():
     names = ['Ридли Скотт', "Эндри Уир", "Марк Уотни", "Венката Капур", "Тедди Сандрес", "Шон Бин"]
