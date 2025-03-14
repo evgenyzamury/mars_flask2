@@ -2,14 +2,14 @@ import datetime
 import os
 
 from flask import Flask, render_template, redirect, request, json
-from flask_login import LoginManager, login_user, login_required, current_user
+from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 
 from data import db_session
 from data.jobs import Jobs
 from data.users import User
+from forms.jobs import JobsForm
 from forms.login import LoginForm
 from forms.user import RegisterForm
-from forms.jobs import JobsForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -34,11 +34,6 @@ def index():
         from_id_to_name[item.team_leader] = f'{user.name} {user.surname}'
     return render_template('workslog.html', jobs=jobs, from_id_to_name=from_id_to_name)
 
-
-@app.route('/<title>')
-@app.route('/index/<title>')
-def index_title(title):
-    return render_template('base.html', title=title)
 
 
 @app.route('/training/<name>')
@@ -82,6 +77,13 @@ def login():
                                message="Неправильный логин или пароль",
                                form=form)
     return render_template('login.html', title='Авторизация', form=form)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
 
 
 @app.route('/news', methods=['GET', 'POST'])
