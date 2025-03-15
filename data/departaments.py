@@ -3,8 +3,8 @@ from sqlalchemy import orm
 import sqlalchemy
 
 
-class Departament(SqlAlchemyBase):
-    __tablename__ = 'departaments'
+class Department(SqlAlchemyBase):
+    __tablename__ = 'departments'
     id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('users.id'), autoincrement=True, primary_key=True)
     title = sqlalchemy.Column(sqlalchemy.String)
     chief = sqlalchemy.Column(sqlalchemy.Integer)

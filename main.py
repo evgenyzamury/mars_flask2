@@ -1,8 +1,11 @@
 import datetime
 import os
+import pprint
 
-from flask import Flask, render_template, redirect, request, json
+from flask import Flask, render_template, redirect, request, json, abort
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
+
+from sqlalchemy import or_
 
 from data import db_session
 from data.jobs import Jobs
@@ -32,8 +35,8 @@ def index():
     for item in jobs:
         user = db_sess.query(User).filter(User.id == item.team_leader).first()
         from_id_to_name[item.team_leader] = f'{user.name} {user.surname}'
+    pprint.pprint(from_id_to_name)
     return render_template('workslog.html', jobs=jobs, from_id_to_name=from_id_to_name)
-
 
 
 @app.route('/training/<name>')
@@ -86,7 +89,7 @@ def logout():
     return redirect("/")
 
 
-@app.route('/news', methods=['GET', 'POST'])
+@app.route('/jobs', methods=['GET', 'POST'])
 @login_required
 def add_news():
     form = JobsForm()
@@ -101,8 +104,43 @@ def add_news():
         db_sess.merge(current_user)
         db_sess.commit()
         return redirect('/')
-    return render_template('jobs.html', title='Добавление новости',
-                           form=form)
+    return render_template('jobs.html', title='Добавление работы', form=form)
+
+
+@app.route('/jobs/<int:id_jobs>', methods=['GET', 'POST'])
+def edit_job(id_jobs):
+    form = JobsForm()
+    print(request.method)
+    if request.method == 'GET':
+        db_sess = db_session.create_session()
+        job = db_sess.query(Jobs).filter(Jobs.id == id_jobs,
+                                         or_(Jobs.team_leader == current_user.id, current_user.id == 1)).first()
+        if job:
+            form.job.data = job.job
+            form.team_leader.data = job.team_leader
+            form.collaborators.data = job.collaborators
+            form.is_finished.data = job.is_finished
+            form.work_size.data = job.work_size
+            form.submit.label.text = 'Редактировать'
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        job = db_sess.query(Jobs).filter(Jobs.id == id_jobs,
+                                         or_(Jobs.team_leader == current_user.id, current_user.id == 1)).first()
+        if job:
+            job.job = form.job.data
+            job.team_leader = form.team_leader.data
+            job.collaborators = form.collaborators.data
+            job.is_finished = form.is_finished.data
+            job.work_size = form.work_size.data
+            db_sess.commit()
+            return redirect('/')
+        else:
+            abort(404)
+    return render_template('jobs.html', title='Edit job', form=form)
+
+
 @app.route('/distribution')
 def distribution():
     names = ['Ридли Скотт', "Эндри Уир", "Марк Уотни", "Венката Капур", "Тедди Сандрес", "Шон Бин"]
@@ -231,5 +269,4 @@ if __name__ == '__main__':
         job.is_finished = False
         db_sess.add(job)
         db_sess.commit()
-
     app.run(port=8080, host='127.0.0.1')

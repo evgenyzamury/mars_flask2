@@ -11,8 +11,12 @@ div.block-image{
     text-align: center;
 }
 
+table{
+    width: 100%;
+}
 td{
     padding: 15px;
+    align-items: center;
 }
 
 thead{

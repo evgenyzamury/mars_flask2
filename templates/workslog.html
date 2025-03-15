@@ -24,5 +24,8 @@
         </tr>
     </tbody>
 </table>
+{% if current_user.is_authenticated and (current_user.id == item.team_leader or current_user.id == 1) %}
+<a class="btn btn-warning" href="/jobs/{{ item.id }}">Редактировать</a>
+{% endif %}
 {% endfor %}
 {% endblock%}
