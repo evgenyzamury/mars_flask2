@@ -26,7 +26,7 @@
     </tr>
     </tbody>
 </table>
-{% if current_user.is_authenticated and current_user.id == item.chief %}
+{% if current_user.is_authenticated and (current_user.id == item.chief or current_user.id == 1) %}
 <a href="/edit_departments/{{ item.id }}" class="btn btn-warning">Edit department</a>
 <a href="/delete_departments/{{ item.id }}" class="btn btn-danger">Delete department</a>
 {% endif %}
