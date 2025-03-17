@@ -11,7 +11,6 @@ from data import db_session
 from data.jobs import Jobs
 from data.users import User
 from data.departaments import Department
-from data.category import Category
 from forms.jobs import JobsForm
 from forms.login import LoginForm
 from forms.user import RegisterForm
@@ -98,17 +97,13 @@ def add_jobs():
     form = JobsForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        category = db_sess.query(Category).filter(Category.id == form.hazard_category.data).first()
-        if not category:
-            abort(404)
         jobs = Jobs()
-        jobs.categories.append(category)
         jobs.job = form.job.data
-        jobs.team_leader = form.team_leader.data
-        jobs.work_size = form.work_size.data
+        jobs.team_leader = form.job.data
+        jobs.work_size = form.job.data
         jobs.collaborators = form.collaborators.data
         current_user.jobs.append(jobs)
-        db_sess.add(jobs)
+        db_sess.merge(current_user)
         db_sess.commit()
         return redirect('/')
     return render_template('jobs.html', title='Добавление работы', form=form)
@@ -357,18 +352,4 @@ if __name__ == '__main__':
     #     job.is_finished = False
     #     db_sess.add(job)
     #     db_sess.commit()
-    # db_sess = db_session.create_session()
-    # category = Category()
-    # category.category = 'Super Danger'
-    # job = Jobs()
-    # job.job = 'new'
-    # job.team_leader = 2
-    # job.collaborators = 2
-    # job.work_size = 15
-    # job.categories.append(category)
-    # db_sess.add(job)
-    # db_sess.commit()
-    # print(job.categories)
-    # print(job.categories[0].id)
-    # print(job.categories[0].category)
     app.run(port=8080, host='127.0.0.1')
