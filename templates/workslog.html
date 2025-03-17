@@ -15,6 +15,7 @@
         <td>Team leader</td>
         <td>Duration</td>
         <td>List of collaborators</td>
+        <td>Hazard category</td>
         <td>is finished</td>
     </tr>
     </thead>
@@ -24,6 +25,7 @@
         <td bgcolor="#eeeeff">{{ from_id_to_name[item.team_leader] }}</td>
         <td bgcolor="#eeeeff">{{ item.work_size }} hours</td>
         <td bgcolor="#eeeeff">{{ item.collaborators }}</td>
+        <td bgcolor="#eeeeff">{% for category in item.categories %} {{ category.id }} {% endfor %}</td>
         {% if item.is_finished %}
         <td bgcolor="#deffee">finished</td>
         {% else %}

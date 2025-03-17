@@ -14,3 +14,4 @@ class Jobs(SqlAlchemyBase):
     end_date = sqlalchemy.Column(sqlalchemy.DateTime)
     is_finished = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
     user = orm.relationship('User')
+    categories = orm.relationship('Category', secondary='news_to_category', backref='news')
