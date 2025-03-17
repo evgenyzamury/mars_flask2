@@ -99,8 +99,8 @@ def add_jobs():
         db_sess = db_session.create_session()
         jobs = Jobs()
         jobs.job = form.job.data
-        jobs.team_leader = form.job.data
-        jobs.work_size = form.job.data
+        jobs.team_leader = form.team_leader.data
+        jobs.work_size = form.work_size.data
         jobs.collaborators = form.collaborators.data
         current_user.jobs.append(jobs)
         db_sess.merge(current_user)
