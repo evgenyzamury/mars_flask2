@@ -15,6 +15,7 @@ from forms.jobs import JobsForm
 from forms.login import LoginForm
 from forms.user import RegisterForm
 from forms.department import DepartmentForm
+from yandex_map import get_image
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -206,7 +207,8 @@ def register():
             position=form.position.data,
             speciality=form.speciality.data,
             address=form.address.data,
-            modified_date=datetime.datetime.now()
+            city_from=form.city_from.data,
+            modified_date=datetime.datetime.now(),
         )
         user.set_password(form.password.data)
         db_sess.add(user)
@@ -282,6 +284,18 @@ def delete_departments(id_department):
     else:
         abort(404)
     return redirect('/departments')
+
+
+@app.route('/users_show/<int:user_id>')
+def city_show(user_id):
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == user_id).first()
+    if not user:
+        abort(404)
+    city = user.city_from
+    if get_image(city):
+        return render_template('user_show.html', city=city, name=user.name, surname=user.surname)
+    abort(404)
 
 
 @app.errorhandler(404)
