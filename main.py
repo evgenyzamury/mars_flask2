@@ -4,6 +4,7 @@ import pprint
 
 from flask import Flask, render_template, redirect, request, json, abort, make_response, jsonify
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
+from flask_restful import Api
 
 from sqlalchemy import or_
 
@@ -16,9 +17,11 @@ from forms.login import LoginForm
 from forms.user import RegisterForm
 from forms.department import DepartmentForm
 from yandex_map import get_image
+from data import users_resource
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+api = Api(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -376,6 +379,11 @@ if __name__ == '__main__':
     #     job.is_finished = False
     #     db_sess.add(job)
     #     db_sess.commit()
+    # для списка объектов
+    api.add_resource(users_resource.UsersListResource, '/api/v2/users')
+
+    # для одного объекта
+    api.add_resource(users_resource.UsersResource, '/api/v2/users/<int:user_id>')
     app.register_blueprint(jobs_api.blueprint)
     app.register_blueprint(user_api.blueprint)
     app.run(port=8080, host='127.0.0.1')
