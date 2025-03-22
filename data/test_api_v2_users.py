@@ -1,4 +1,4 @@
-from requests import post, get, delete
+from requests import post, get, delete, put
 
 print(get('http://127.0.0.1:8080/api/v2/users').json())
 
@@ -11,7 +11,7 @@ print(post('http://127.0.0.1:8080/api/v2/users', json={
     'surname': ' 1231',
     'age': 123,
     'address': '123',
-    'email': 'aev223332214322@ama.ru',
+    'email': 'aev223332154214322@ama.ru',
     'position': 'fda',
     'speciality': '1231',
     "hashed_password": 'qwerty'
@@ -32,7 +32,10 @@ print(delete('http://127.0.0.1:8080/api/v2/users/3').json())
 
 print(post('http://127.0.0.1:8080/api/v2/users', json={}).json())
 
+print(get('http://127.0.0.1:8080/api/v2/users').json())
 
 print(get('http://127.0.0.1:8080/api/v2/users').json())
+
+print(put('http://127.0.0.1:8080/api/v2/users/1', json={'age': 19}).json())
 
 print(get('http://127.0.0.1:8080/api/v2/users').json())

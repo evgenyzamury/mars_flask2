@@ -18,6 +18,7 @@ from forms.user import RegisterForm
 from forms.department import DepartmentForm
 from yandex_map import get_image
 from data import users_resource
+from data import jobs_resource
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -384,6 +385,9 @@ if __name__ == '__main__':
 
     # для одного объекта
     api.add_resource(users_resource.UsersResource, '/api/v2/users/<int:user_id>')
+    api.add_resource(jobs_resource.JobsResourceList, '/api/v2/jobs')
+    api.add_resource(jobs_resource.JobsResource, '/api/v2/jobs/<int:jobs_id>')
+
     app.register_blueprint(jobs_api.blueprint)
     app.register_blueprint(user_api.blueprint)
     app.run(port=8080, host='127.0.0.1')

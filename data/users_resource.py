@@ -3,7 +3,7 @@ from flask import jsonify
 
 from data import db_session
 from data.users import User
-from .reqparce_user import parser
+from .reqparce_user import parser, put_parser
 from werkzeug.security import generate_password_hash
 
 
@@ -13,8 +13,8 @@ def set_password(password):
 
 def abort_if_users_not_found(user_id):
     session = db_session.create_session()
-    news = session.query(User).get(user_id)
-    if not news:
+    users = session.query(User).get(user_id)
+    if not users:
         abort(404, message=f"Users {user_id} not found")
 
 
@@ -35,6 +35,37 @@ class UsersResource(Resource):
         session.delete(users)
         session.commit()
         return jsonify({'success': 'OK'})
+
+    def put(self, user_id):
+        args = put_parser.parse_args()
+        none = [i for i in args if args[i] is None]  # находим пустые значения словаря
+        for i in none:
+            args.pop(i)  # удаляем элементы с пустыми ключами
+
+        abort_if_users_not_found(user_id)
+        session = db_session.create_session()
+        users = session.query(User).get(user_id)
+
+        new_users = User(
+            name=args.get('name', users.name),
+            surname=args.get('surname', users.surname),
+            age=args.get('age', users.age),
+            address=args.get('address', users.address),
+            email=args.get('email', users.email),
+            position=args.get('position', users.position),
+            speciality=args.get('speciality', users.speciality),
+            hashed_password=set_password(args.get('hashed_password', users.hashed_password))
+        )
+        users.name = new_users.name
+        users.surname = new_users.surname
+        users.age = new_users.age
+        users.address = new_users.address
+        users.email = new_users.email
+        users.position = new_users.position
+        users.hashed_password = new_users.hashed_password
+
+        session.commit()
+        return jsonify({'OK': 'success'})
 
 
 class UsersListResource(Resource):
